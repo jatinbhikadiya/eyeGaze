@@ -4,12 +4,23 @@ Created on May 1, 2014
 @author: Jatin
 '''
 import os
-from support import utility
+
+import sys
 
 dataPath = '/Jatin/Brivas/gaze/data'
 projectPath = '/Jatin/workspace/eyePupil'
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
+sys.path.append(os.path.join(projectPath,'src'))
+print sys.path
+from support import utility
+import skimage.io as io
+from skimage import data
+
+from skimage.transform import resize
+from scipy import misc
+
+
 
 def writePathToSamples(parentDir):
     '''write paths to samples for each labels. The .txt files are generated
@@ -43,6 +54,7 @@ def loadData(parentDir):
     baseName = os.path.basename(parentDir)
     data_dir = os.path.join(projectPath,baseName)
     files = os.listdir(data_dir)
+    files = [f for f in files if f.split('.')[-1]=='txt']
     data = []
     for f in files:
         label = f.split('.')[0]
@@ -52,14 +64,18 @@ def loadData(parentDir):
                 data.append([image.strip(),label])
     return data
 
-def classify(data):
-    for sample in data:
-        print sample[0]
+def classify(img_data):
+    for sample in img_data:
+        im = sample[0]
+        label = sample[1]
+        img = io.imread(im)
+        scaled_img = resize(img,(100,120))
+       
         
     
 if __name__ == '__main__':
-    #writePathToSamples(leftEyePath)
-    #writePathToSamples(rightEyePath)
+    writePathToSamples(leftEyePath)
+    writePathToSamples(rightEyePath)
     leftData = loadData(leftEyePath)
     rightData = loadData(rightEyePath)
     classify(leftData)
