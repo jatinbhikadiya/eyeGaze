@@ -21,7 +21,10 @@ import itertools
 
 from skimage.transform import resize
 from scipy import misc
-
+from sklearn.cross_validation import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cross_validation import cross_val_score
+import cPickle
 
 
 def writePathToSamples(parentDir):
@@ -66,14 +69,20 @@ def loadData(parentDir):
                 data.append([image.strip(),label])
     return data
 
-def classify(img_data):
+def extract_features(img_data):
+    features = []
+    labels = []
     for sample in img_data:
         im = sample[0]
         label = sample[1]
         feature_vector = get_lbp_feature(im)
+        features.append(feature_vector)
+        labels.append(label)
+    print len(features)
+    return (features,labels)
 
 def get_lbp_feature(im):
-    img = io.imread(im)
+    img = io.imread(im,as_grey=True)
     scaled_img = resize(img,(96,112))
     patches = utility.extract_patches(scaled_img)
     descriptor = []
@@ -83,12 +92,46 @@ def get_lbp_feature(im):
         lbp_descriptor = np.divide(lbp_descriptor,lbp_descriptor.sum())
         descriptor.append(lbp_descriptor)
     feature = np.concatenate(np.array(descriptor))
-    return feature
+    return feature.tolist()
+
+def classify(feature,labels,model='model'):
+    print "classifying data"
+    modelDir = os.path.join(projectPath,'model')
+    utility.checkDirectory(modelDir)
+    dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
+                                                                        labels, test_size=0.20, 
+                                                                        random_state=42)
+    print len(dataTrain)
+    print len(labelsTrain)
+    print len(dataTest)
+    print len(labelsTest)
+    clf = RandomForestClassifier(n_estimators=10)
+    clf = clf.fit(dataTrain, labelsTrain)
+        # save the classifier
+    with open(os.path.join(modelDir,model+'.pkl'), 'wb') as fid:
+        cPickle.dump(clf, fid)    
+    # load it again
+    with open(os.path.join(modelDir,model+'.pkl'), 'rb') as fid:
+        clf_loaded = cPickle.load(fid)   
+    predicted_label = clf_loaded.predict(dataTest)
+    true_predictions = 0
+    for i in range(len(labelsTest)):
+        print 'Given Label = '+str(labelsTest[i])
+        print 'predicted Label2 =' + str(predicted_label[i])
+        if (labelsTest[i]==predicted_label[i]):
+            true_predictions = true_predictions +1
+    accuracy = float(true_predictions)/float(len(labelsTest))
+    print 'accuracy is :', str(accuracy)
 
 if __name__ == '__main__':
     writePathToSamples(leftEyePath)
     writePathToSamples(rightEyePath)
     leftData = loadData(leftEyePath)
     rightData = loadData(rightEyePath)
-    classify(leftData)
+    leftFeatures, leftLabels = extract_features(leftData)
+    rightFeatures, rightLabels = extract_features(rightData)
+    classify(leftFeatures,leftLabels,'left')
+    classify(rightFeatures,rightLabels,'right')
+    
+    
     
