@@ -18,3 +18,21 @@ def checkDirectory(dir_path):
 def getSubdirectories(directory):
     return [name for name in os.listdir(directory)
             if os.path.isdir(os.path.join(directory, name))]
+    
+def extract_patches(image):
+    block_size = 16
+    patches=[]
+    width = image.shape[1]
+    height = image.shape[0]
+    grid_x = int(width/16.0)
+    grid_y = int(height/16.0)
+    for i in range(grid_x):
+        for j in range(grid_y):
+            x=i*block_size
+            y=j*block_size
+            patch = image[int(y):int(y+16),int(x):int(x+16)]
+            #print patch.shape
+            patches.append(patch)
+        #else :
+            #print p.x
+    return patches

@@ -4,7 +4,7 @@ Created on May 1, 2014
 @author: Jatin
 '''
 import os
-
+import numpy as np
 import sys
 
 dataPath = '/Jatin/Brivas/gaze/data'
@@ -16,6 +16,8 @@ print sys.path
 from support import utility
 import skimage.io as io
 from skimage import data
+import mahotas
+import itertools
 
 from skimage.transform import resize
 from scipy import misc
@@ -68,11 +70,21 @@ def classify(img_data):
     for sample in img_data:
         im = sample[0]
         label = sample[1]
-        img = io.imread(im)
-        scaled_img = resize(img,(100,120))
-       
-        
-    
+        feature_vector = get_lbp_feature(im)
+
+def get_lbp_feature(im):
+    img = io.imread(im)
+    scaled_img = resize(img,(96,112))
+    patches = utility.extract_patches(scaled_img)
+    descriptor = []
+    for patch in patches:
+        '''Extract LBP descriptor'''
+        lbp_descriptor = mahotas.features.lbp(patch,2,9)
+        lbp_descriptor = np.divide(lbp_descriptor,lbp_descriptor.sum())
+        descriptor.append(lbp_descriptor)
+    feature = np.concatenate(np.array(descriptor))
+    return feature
+
 if __name__ == '__main__':
     writePathToSamples(leftEyePath)
     writePathToSamples(rightEyePath)
