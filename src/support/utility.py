@@ -23,13 +23,16 @@ def extract_patches(image):
     block_size = 16
     patches=[]
     width = image.shape[1]
+    #print width
     height = image.shape[0]
+    #print height
     grid_x = int(width/16.0)
     grid_y = int(height/16.0)
-    for i in range(grid_x):
-        for j in range(grid_y):
-            x=i*block_size
-            y=j*block_size
+    for i in range(grid_y):
+        for j in range(grid_x):
+            x=j*block_size
+            #print x
+            y=i*block_size
             patch = image[int(y):int(y+16),int(x):int(x+16)]
             #print patch.shape
             patches.append(patch)

@@ -12,7 +12,7 @@ projectPath = '/Jatin/workspace/eyePupil'
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
 sys.path.append(os.path.join(projectPath,'src'))
-print sys.path
+
 from support import utility
 import skimage.io as io
 from skimage import data
@@ -72,9 +72,20 @@ def loadData(parentDir):
 def extract_features(img_data):
     features = []
     labels = []
+    #This part is to convert our problem into 3 class problem
+    all_labels = []
+    for i in range(1,10):
+        all_labels.append('block_'+str(i))
     for sample in img_data:
         im = sample[0]
         label = sample[1]
+        if label in all_labels[0:3]:
+            label = 'left'
+        elif label in all_labels[3:6]:
+            label = 'center'
+        elif label in all_labels[6:9]:
+            label = 'right'
+        else : print 'label not found'
         feature_vector = get_lbp_feature(im)
         features.append(feature_vector)
         labels.append(label)
@@ -108,6 +119,9 @@ def classify(feature,labels,model='model'):
     clf = RandomForestClassifier(n_estimators=10)
     clf = clf.fit(dataTrain, labelsTrain)
         # save the classifier
+    scores = cross_val_score(clf, dataTrain, labelsTrain)
+    print scores.mean()
+    raw_input()
     with open(os.path.join(modelDir,model+'.pkl'), 'wb') as fid:
         cPickle.dump(clf, fid)    
     # load it again
