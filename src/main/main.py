@@ -7,7 +7,7 @@ import os
 import numpy as np
 import sys
 
-dataPath = '/Jatin/Brivas/gaze/data'
+dataPath = '/Jatin/Brivas/gaze/new'
 projectPath = '/Jatin/workspace/eyePupil'
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
@@ -93,8 +93,11 @@ def extract_features(img_data):
     return (features,labels)
 
 def get_lbp_feature(im):
+    print im
     img = io.imread(im,as_grey=True)
-    scaled_img = resize(img,(96,112))
+    #print img.shape
+    #raw_input()
+    scaled_img = resize(img,(48,112))
     patches = utility.extract_patches(scaled_img)
     descriptor = []
     for patch in patches:
