@@ -7,7 +7,7 @@ import os
 import numpy as np
 import sys
 
-dataPath = '/Jatin/Brivas/gaze/new'
+dataPath = '/Jatin/Brivas/gaze/new2'
 projectPath = '/Jatin/workspace/eyePupil'
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
@@ -18,13 +18,14 @@ import skimage.io as io
 from skimage import data
 import mahotas
 import itertools
-
+from sklearn import svm, grid_search
 from skimage.transform import resize
 from scipy import misc
 from sklearn.cross_validation import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import cross_val_score
 import cPickle
+from sklearn.metrics import classification_report
 
 
 def writePathToSamples(parentDir):
@@ -89,11 +90,11 @@ def extract_features(img_data):
         feature_vector = get_lbp_feature(im)
         features.append(feature_vector)
         labels.append(label)
-    print len(features)
+    print 'No of features '+str(len(features))
     return (features,labels)
 
 def get_lbp_feature(im):
-    print im
+    #print im
     img = io.imread(im,as_grey=True)
     #print img.shape
     #raw_input()
@@ -108,23 +109,55 @@ def get_lbp_feature(im):
     feature = np.concatenate(np.array(descriptor))
     return feature.tolist()
 
-def classify(feature,labels,model='model'):
-    print "classifying data"
-    modelDir = os.path.join(projectPath,'model')
+def classify_svm(feature,labels,model='left'):
+    modelDir = os.path.join(projectPath,model)
     utility.checkDirectory(modelDir)
     dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
                                                                         labels, test_size=0.20, 
                                                                         random_state=42)
-    print len(dataTrain)
-    print len(labelsTrain)
-    print len(dataTest)
-    print len(labelsTest)
+    param_grid = [
+                  {'C': [1, 10, 100, 1000], 'gamma': [1,0.1,0.001, 0.0001],'kernel': ['linear']},
+                  {'C': [1, 10, 100, 1000], 'gamma': [1,0.1,0.001, 0.0001], 'kernel': ['rbf']},
+                  ]
+    svc = svm.SVC()
+    clf = grid_search.GridSearchCV(estimator=svc, param_grid=param_grid,cv=5,n_jobs=-2)
+    print "Classification for "+model+" eye\n"
+    print "Training SVM classifier for grid of C and gamma values to select best parameter\n"
+    clf.fit(dataTrain,labelsTrain)
+    print("Best parameters set found on development set:")
+    print()
+    print(clf.best_estimator_)
+    print()
+    print("Grid scores on development set:")
+    print()
+    for params, mean_score, scores in clf.grid_scores_:
+        print("%0.3f (+/-%0.03f) for %r"
+              % (mean_score, scores.std() / 2, params))
+    print()
+
+    print("Detailed classification report:")
+    print()
+    print("The model is trained on the full development set.")
+    print("The scores are computed on the full evaluation set.")
+    print()
+    y_true, y_pred = labelsTest, clf.predict(dataTest)
+    print(classification_report(y_true, y_pred))
+    print()
+    with open(os.path.join(modelDir,model+'_svm.pkl'), 'wb') as fid:
+        cPickle.dump(clf, fid) 
+    
+def classify(feature,labels,model='model'):
+    print "classifying data"
+    modelDir = os.path.join(projectPath,model)
+    utility.checkDirectory(modelDir)
+    dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
+                                                                        labels, test_size=0.20, 
+                                                                        random_state=42)
     clf = RandomForestClassifier(n_estimators=10)
     clf = clf.fit(dataTrain, labelsTrain)
         # save the classifier
     scores = cross_val_score(clf, dataTrain, labelsTrain)
     print scores.mean()
-    raw_input()
     with open(os.path.join(modelDir,model+'.pkl'), 'wb') as fid:
         cPickle.dump(clf, fid)    
     # load it again
@@ -147,8 +180,8 @@ if __name__ == '__main__':
     rightData = loadData(rightEyePath)
     leftFeatures, leftLabels = extract_features(leftData)
     rightFeatures, rightLabels = extract_features(rightData)
-    classify(leftFeatures,leftLabels,'left')
-    classify(rightFeatures,rightLabels,'right')
+    classify_svm(leftFeatures,leftLabels,'left')
+    classify_svm(rightFeatures,rightLabels,'right')
     
     
     
