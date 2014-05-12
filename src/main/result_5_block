@@ -1,0 +1,126 @@
+['a', 'ajay', 'anna', 'anna_far', 'arindam', 'bose', 'bose_far', 'chacha', 'cuty', 'damle', 'default', 'gujju', 'hanisha', 'hanisha_far', 'hansaa', 'hrushi', 'hrushi_far', 'jazz', 'kiran', 'kush', 'kush_near', 'manoj', 'nikhil', 'nikhil_far', 'phasad', 'phase', 'phase_far', 'pinal', 'raja', 'smita', 'sounak', 'sridhar', 'vihari', 'yerra', 'zankar']
+['a', 'ajay', 'anna', 'anna_far', 'arindam', 'bose', 'bose_far', 'chacha', 'cuty', 'damle', 'default', 'gujju', 'hanisha', 'hanisha_far', 'hansaa', 'hrushi', 'hrushi_far', 'jazz', 'kiran', 'kush', 'kush_near', 'manoj', 'nikhil', 'nikhil_far', 'phasad', 'phase', 'phase_far', 'pinal', 'raja', 'smita', 'sounak', 'sridhar', 'vihari', 'yerra', 'zankar']
+No of features 1058
+No of features 1056
+Classification for left eye
+
+Training SVM classifier for grid of C and gamma values to select best parameter
+
+Best parameters set found on development set:
+()
+SVC(C=100, cache_size=200, class_weight=None, coef0=0.0, degree=3, gamma=1,
+  kernel=rbf, max_iter=-1, probability=False, random_state=None,
+  shrinking=True, tol=0.001, verbose=False)
+()
+Grid scores on development set:
+()
+0.355 (+/-0.013) for {'kernel': 'linear', 'C': 1, 'gamma': 1}
+0.355 (+/-0.013) for {'kernel': 'linear', 'C': 1, 'gamma': 0.1}
+0.355 (+/-0.013) for {'kernel': 'linear', 'C': 1, 'gamma': 0.001}
+0.355 (+/-0.013) for {'kernel': 'linear', 'C': 1, 'gamma': 0.0001}
+0.382 (+/-0.023) for {'kernel': 'linear', 'C': 10, 'gamma': 1}
+0.382 (+/-0.023) for {'kernel': 'linear', 'C': 10, 'gamma': 0.1}
+0.382 (+/-0.023) for {'kernel': 'linear', 'C': 10, 'gamma': 0.001}
+0.382 (+/-0.023) for {'kernel': 'linear', 'C': 10, 'gamma': 0.0001}
+0.384 (+/-0.021) for {'kernel': 'linear', 'C': 100, 'gamma': 1}
+0.384 (+/-0.021) for {'kernel': 'linear', 'C': 100, 'gamma': 0.1}
+0.384 (+/-0.021) for {'kernel': 'linear', 'C': 100, 'gamma': 0.001}
+0.384 (+/-0.021) for {'kernel': 'linear', 'C': 100, 'gamma': 0.0001}
+0.395 (+/-0.020) for {'kernel': 'linear', 'C': 1000, 'gamma': 1}
+0.395 (+/-0.020) for {'kernel': 'linear', 'C': 1000, 'gamma': 0.1}
+0.395 (+/-0.020) for {'kernel': 'linear', 'C': 1000, 'gamma': 0.001}
+0.395 (+/-0.020) for {'kernel': 'linear', 'C': 1000, 'gamma': 0.0001}
+0.351 (+/-0.017) for {'kernel': 'rbf', 'C': 1, 'gamma': 1}
+0.320 (+/-0.012) for {'kernel': 'rbf', 'C': 1, 'gamma': 0.1}
+0.240 (+/-0.001) for {'kernel': 'rbf', 'C': 1, 'gamma': 0.001}
+0.240 (+/-0.001) for {'kernel': 'rbf', 'C': 1, 'gamma': 0.0001}
+0.431 (+/-0.029) for {'kernel': 'rbf', 'C': 10, 'gamma': 1}
+0.366 (+/-0.018) for {'kernel': 'rbf', 'C': 10, 'gamma': 0.1}
+0.240 (+/-0.001) for {'kernel': 'rbf', 'C': 10, 'gamma': 0.001}
+0.240 (+/-0.001) for {'kernel': 'rbf', 'C': 10, 'gamma': 0.0001}
+0.436 (+/-0.028) for {'kernel': 'rbf', 'C': 100, 'gamma': 1}
+0.409 (+/-0.021) for {'kernel': 'rbf', 'C': 100, 'gamma': 0.1}
+0.335 (+/-0.014) for {'kernel': 'rbf', 'C': 100, 'gamma': 0.001}
+0.240 (+/-0.001) for {'kernel': 'rbf', 'C': 100, 'gamma': 0.0001}
+0.436 (+/-0.028) for {'kernel': 'rbf', 'C': 1000, 'gamma': 1}
+0.418 (+/-0.017) for {'kernel': 'rbf', 'C': 1000, 'gamma': 0.1}
+0.378 (+/-0.020) for {'kernel': 'rbf', 'C': 1000, 'gamma': 0.001}
+0.335 (+/-0.014) for {'kernel': 'rbf', 'C': 1000, 'gamma': 0.0001}
+()
+Detailed classification report:
+()
+The model is trained on the full development set.
+The scores are computed on the full evaluation set.
+()
+             precision    recall  f1-score   support
+
+     center       0.11      0.12      0.12        25
+       left       0.37      0.40      0.38        57
+  left_most       0.63      0.59      0.61        49
+      right       0.42      0.36      0.39        44
+ right_most       0.53      0.54      0.53        37
+
+avg / total       0.44      0.43      0.43       212
+
+()
+Classification for right eye
+
+Training SVM classifier for grid of C and gamma values to select best parameter
+
+Best parameters set found on development set:
+()
+SVC(C=100, cache_size=200, class_weight=None, coef0=0.0, degree=3, gamma=1,
+  kernel=rbf, max_iter=-1, probability=False, random_state=None,
+  shrinking=True, tol=0.001, verbose=False)
+()
+Grid scores on development set:
+()
+0.361 (+/-0.010) for {'kernel': 'linear', 'C': 1, 'gamma': 1}
+0.361 (+/-0.010) for {'kernel': 'linear', 'C': 1, 'gamma': 0.1}
+0.361 (+/-0.010) for {'kernel': 'linear', 'C': 1, 'gamma': 0.001}
+0.361 (+/-0.010) for {'kernel': 'linear', 'C': 1, 'gamma': 0.0001}
+0.380 (+/-0.011) for {'kernel': 'linear', 'C': 10, 'gamma': 1}
+0.380 (+/-0.011) for {'kernel': 'linear', 'C': 10, 'gamma': 0.1}
+0.380 (+/-0.011) for {'kernel': 'linear', 'C': 10, 'gamma': 0.001}
+0.380 (+/-0.011) for {'kernel': 'linear', 'C': 10, 'gamma': 0.0001}
+0.351 (+/-0.018) for {'kernel': 'linear', 'C': 100, 'gamma': 1}
+0.351 (+/-0.018) for {'kernel': 'linear', 'C': 100, 'gamma': 0.1}
+0.351 (+/-0.018) for {'kernel': 'linear', 'C': 100, 'gamma': 0.001}
+0.351 (+/-0.018) for {'kernel': 'linear', 'C': 100, 'gamma': 0.0001}
+0.348 (+/-0.018) for {'kernel': 'linear', 'C': 1000, 'gamma': 1}
+0.348 (+/-0.018) for {'kernel': 'linear', 'C': 1000, 'gamma': 0.1}
+0.348 (+/-0.018) for {'kernel': 'linear', 'C': 1000, 'gamma': 0.001}
+0.348 (+/-0.018) for {'kernel': 'linear', 'C': 1000, 'gamma': 0.0001}
+0.357 (+/-0.014) for {'kernel': 'rbf', 'C': 1, 'gamma': 1}
+0.323 (+/-0.009) for {'kernel': 'rbf', 'C': 1, 'gamma': 0.1}
+0.231 (+/-0.000) for {'kernel': 'rbf', 'C': 1, 'gamma': 0.001}
+0.231 (+/-0.000) for {'kernel': 'rbf', 'C': 1, 'gamma': 0.0001}
+0.397 (+/-0.018) for {'kernel': 'rbf', 'C': 10, 'gamma': 1}
+0.370 (+/-0.017) for {'kernel': 'rbf', 'C': 10, 'gamma': 0.1}
+0.231 (+/-0.000) for {'kernel': 'rbf', 'C': 10, 'gamma': 0.001}
+0.231 (+/-0.000) for {'kernel': 'rbf', 'C': 10, 'gamma': 0.0001}
+0.408 (+/-0.024) for {'kernel': 'rbf', 'C': 100, 'gamma': 1}
+0.376 (+/-0.009) for {'kernel': 'rbf', 'C': 100, 'gamma': 0.1}
+0.329 (+/-0.008) for {'kernel': 'rbf', 'C': 100, 'gamma': 0.001}
+0.231 (+/-0.000) for {'kernel': 'rbf', 'C': 100, 'gamma': 0.0001}
+0.408 (+/-0.024) for {'kernel': 'rbf', 'C': 1000, 'gamma': 1}
+0.352 (+/-0.021) for {'kernel': 'rbf', 'C': 1000, 'gamma': 0.1}
+0.371 (+/-0.018) for {'kernel': 'rbf', 'C': 1000, 'gamma': 0.001}
+0.329 (+/-0.008) for {'kernel': 'rbf', 'C': 1000, 'gamma': 0.0001}
+()
+Detailed classification report:
+()
+The model is trained on the full development set.
+The scores are computed on the full evaluation set.
+()
+             precision    recall  f1-score   support
+
+     center       0.14      0.14      0.14        22
+       left       0.46      0.46      0.46        56
+  left_most       0.70      0.62      0.66        50
+      right       0.36      0.45      0.40        40
+ right_most       0.66      0.61      0.64        44
+
+avg / total       0.51      0.50      0.50       212
+
+()

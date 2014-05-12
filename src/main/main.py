@@ -80,12 +80,16 @@ def extract_features(img_data):
     for sample in img_data:
         im = sample[0]
         label = sample[1]
-        if label in all_labels[0:3]:
+        if label in all_labels[0:2]:
+            label = 'left_most'
+        elif label in all_labels[2:4]:
             label = 'left'
-        elif label in all_labels[3:6]:
+        elif label in all_labels[4:5]:
             label = 'center'
-        elif label in all_labels[6:9]:
+        elif label in all_labels[5:7]:
             label = 'right'
+        elif label in all_labels[7:9]:
+            label = 'right_most'
         else : print 'label not found'
         feature_vector = get_lbp_feature(im)
         features.append(feature_vector)
