@@ -7,8 +7,8 @@ import os
 import numpy as np
 import sys
 import time
-dataPath = '/Jatin/Brivas/gaze/new2'
 projectPath = '/Jatin/workspace/eyePupil'
+dataPath = os.path.join(projectPath,'data')
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
 sys.path.append(os.path.join(projectPath,'src'))
@@ -77,7 +77,7 @@ def extract_features(img_data):
     for sample in img_data:
         im = sample[0]
         label = sample[1]
-        #label = utility.change_label(label,3)
+        label = utility.change_label(label,3)
         feature_vector = get_lbp_feature(im)
         features.append(feature_vector)
         labels.append(label)
@@ -184,33 +184,33 @@ def classify_rfc(feature,labels,model='left'):
         cPickle.dump(clf, fid)
 
 
-    
-def classify(feature,labels,model='model'):
-    print "classifying data"
-    modelDir = os.path.join(projectPath,model)
-    utility.checkDirectory(modelDir)
-    dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
-                                                                        labels, test_size=0.20, 
-                                                                        random_state=42)
-    clf = RandomForestClassifier(n_estimators=10)
-    clf = clf.fit(dataTrain, labelsTrain)
-        # save the classifier
-    scores = cross_val_score(clf, dataTrain, labelsTrain)
-    print scores.mean()
-    with open(os.path.join(modelDir,model+'.pkl'), 'wb') as fid:
-        cPickle.dump(clf, fid)    
-    # load it again
-    with open(os.path.join(modelDir,model+'.pkl'), 'rb') as fid:
-        clf_loaded = cPickle.load(fid)   
-    predicted_label = clf_loaded.predict(dataTest)
-    true_predictions = 0
-    for i in range(len(labelsTest)):
-        print 'Given Label = '+str(labelsTest[i])
-        print 'predicted Label2 =' + str(predicted_label[i])
-        if (labelsTest[i]==predicted_label[i]):
-            true_predictions = true_predictions +1
-    accuracy = float(true_predictions)/float(len(labelsTest))
-    print 'accuracy is :', str(accuracy)
+#     
+# def classify(feature,labels,model='model'):
+#     print "classifying data"
+#     modelDir = os.path.join(projectPath,model)
+#     utility.checkDirectory(modelDir)
+#     dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
+#                                                                         labels, test_size=0.20, 
+#                                                                         random_state=42)
+#     clf = RandomForestClassifier(n_estimators=10)
+#     clf = clf.fit(dataTrain, labelsTrain)
+#         # save the classifier
+#     scores = cross_val_score(clf, dataTrain, labelsTrain)
+#     print scores.mean()
+#     with open(os.path.join(modelDir,model+'.pkl'), 'wb') as fid:
+#         cPickle.dump(clf, fid)    
+#     # load it again
+#     with open(os.path.join(modelDir,model+'.pkl'), 'rb') as fid:
+#         clf_loaded = cPickle.load(fid)   
+#     predicted_label = clf_loaded.predict(dataTest)
+#     true_predictions = 0
+#     for i in range(len(labelsTest)):
+#         print 'Given Label = '+str(labelsTest[i])
+#         print 'predicted Label2 =' + str(predicted_label[i])
+#         if (labelsTest[i]==predicted_label[i]):
+#             true_predictions = true_predictions +1
+#     accuracy = float(true_predictions)/float(len(labelsTest))
+#     print 'accuracy is :', str(accuracy)
 
 
 
