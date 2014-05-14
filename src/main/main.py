@@ -6,7 +6,7 @@ Created on May 1, 2014
 import os
 import numpy as np
 import sys
-
+import time
 dataPath = '/Jatin/Brivas/gaze/new2'
 projectPath = '/Jatin/workspace/eyePupil'
 leftEyePath=os.path.join(dataPath,'left')
@@ -73,24 +73,11 @@ def loadData(parentDir):
 def extract_features(img_data):
     features = []
     labels = []
-    #This part is to convert our problem into 3 class problem
-    all_labels = []
-    for i in range(1,10):
-        all_labels.append('block_'+str(i))
+
     for sample in img_data:
         im = sample[0]
         label = sample[1]
-        if label in all_labels[0:2]:
-            label = 'left_most'
-        elif label in all_labels[2:4]:
-            label = 'left'
-        elif label in all_labels[4:5]:
-            label = 'center'
-        elif label in all_labels[5:7]:
-            label = 'right'
-        elif label in all_labels[7:9]:
-            label = 'right_most'
-        else : print 'label not found'
+        #label = utility.change_label(label,3)
         feature_vector = get_lbp_feature(im)
         features.append(feature_vector)
         labels.append(label)
@@ -114,6 +101,7 @@ def get_lbp_feature(im):
     return feature.tolist()
 
 def classify_svm(feature,labels,model='left'):
+    print "---------SVM Classifier-------------"
     modelDir = os.path.join(projectPath,model)
     utility.checkDirectory(modelDir)
     dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
@@ -125,9 +113,12 @@ def classify_svm(feature,labels,model='left'):
                   ]
     svc = svm.SVC()
     clf = grid_search.GridSearchCV(estimator=svc, param_grid=param_grid,cv=5,n_jobs=-2)
-    print "Classification for "+model+" eye\n"
     print "Training SVM classifier for grid of C and gamma values to select best parameter\n"
+    start = time.time()
     clf.fit(dataTrain,labelsTrain)
+    end = time.time()
+    elapsed = end - start
+    print("Time take  : %f seconds"%elapsed)
     print("Best parameters set found on development set:")
     print()
     print(clf.best_estimator_)
@@ -149,6 +140,50 @@ def classify_svm(feature,labels,model='left'):
     print()
     with open(os.path.join(modelDir,model+'_svm.pkl'), 'wb') as fid:
         cPickle.dump(clf, fid) 
+
+def classify_rfc(feature,labels,model='left'):
+    print "---------Random Forest Classifier-------------"
+
+    modelDir = os.path.join(projectPath,model)
+    utility.checkDirectory(modelDir)
+    dataTrain,dataTest,labelsTrain,labelsTest = train_test_split(feature, 
+                                                                        labels, test_size=0.20, 
+                                                                        random_state=42)
+    param_grid = [
+              {'n_estimators': [1, 10, 100, 1000], 'max_features': [10,50,100, 400]},
+              ]
+    rfc = RandomForestClassifier(n_estimators=10)
+    clf = grid_search.GridSearchCV(estimator=rfc, param_grid=param_grid,cv=5,n_jobs=-2)
+    print "Classification for "+model+" eye\n"
+    print "Training RFC classifier for grid of C and gamma values to select best parameter\n"
+    start = time.time()
+    clf.fit(dataTrain,labelsTrain)
+    end = time.time()
+    elapsed = end - start
+    print("Time take  : %f seconds"%elapsed)
+    print("Best parameters set found on development set:")
+    print()
+    print(clf.best_estimator_)
+    print()
+    print("Grid scores on development set:")
+    print()
+    for params, mean_score, scores in clf.grid_scores_:
+        print("%0.3f (+/-%0.03f) for %r"
+              % (mean_score, scores.std() / 2, params))
+    print()
+
+    print("Detailed classification report:")
+    print()
+    print("The model is trained on the full development set.")
+    print("The scores are computed on the full evaluation set.")
+    print()
+    y_true, y_pred = labelsTest, clf.predict(dataTest)
+    print(classification_report(y_true, y_pred))
+    print()
+    with open(os.path.join(modelDir,model+'_rfc.pkl'), 'wb') as fid:
+        cPickle.dump(clf, fid)
+
+
     
 def classify(feature,labels,model='model'):
     print "classifying data"
@@ -177,6 +212,8 @@ def classify(feature,labels,model='model'):
     accuracy = float(true_predictions)/float(len(labelsTest))
     print 'accuracy is :', str(accuracy)
 
+
+
 if __name__ == '__main__':
     writePathToSamples(leftEyePath)
     writePathToSamples(rightEyePath)
@@ -184,8 +221,13 @@ if __name__ == '__main__':
     rightData = loadData(rightEyePath)
     leftFeatures, leftLabels = extract_features(leftData)
     rightFeatures, rightLabels = extract_features(rightData)
-    classify_svm(leftFeatures,leftLabels,'left')
+    #classify_svm(leftFeatures,leftLabels,'left')
+    print "-----------------------Classification for Left eye ---------------------------\n"
+    classify_svm(leftFeatures, leftLabels, 'left')
+    classify_rfc(leftFeatures,leftLabels,'left')
+    print "-----------------------Classification for Right eye ---------------------------\n"
     classify_svm(rightFeatures,rightLabels,'right')
+    classify_rfc(rightFeatures,rightLabels,'right')
     
     
     
