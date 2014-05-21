@@ -27,6 +27,11 @@ from sklearn.cross_validation import cross_val_score
 import cPickle
 from sklearn.metrics import classification_report
 
+modulePath = '/Jatin/workspace/eyeGaze/src'
+sys.path.append(modulePath)
+import cv2
+import brivasmodule
+import numpy
 
 def writePathToSamples(parentDir):
     '''write paths to samples for each labels. The .txt files are generated
@@ -84,9 +89,10 @@ def extract_features(img_data):
     print 'No of features '+str(len(features))
     return (features,labels)
 
-def get_lbp_feature(im):
+def get_lbp_feature(img,isImgpath = 'True'):
     #print im
-    img = io.imread(im,as_grey=True)
+    if isImgpath:
+        img = io.imread(img,as_grey=True)
     #print img.shape
     #raw_input()
     scaled_img = resize(img,(48,112))
@@ -212,9 +218,17 @@ def classify_rfc(feature,labels,model='left'):
 #     accuracy = float(true_predictions)/float(len(labelsTest))
 #     print 'accuracy is :', str(accuracy)
 
+def loadImage():
+    image = '/Users/Jatin/Copy/zion/DSC_0412.JPG'
+    frame = cv2.imread(image)
+    newFrame = cv2.resize(frame,(200,100))
+#cv2.imshow('jazz',frame)
+    left = numpy.array([])
+    right = numpy.array([])
+    x = brivasmodule.detect(newFrame,image)
+    
 
-
-if __name__ == '__main__':
+def train():
     writePathToSamples(leftEyePath)
     writePathToSamples(rightEyePath)
     leftData = loadData(leftEyePath)
@@ -224,10 +238,55 @@ if __name__ == '__main__':
     #classify_svm(leftFeatures,leftLabels,'left')
     print "-----------------------Classification for Left eye ---------------------------\n"
     classify_svm(leftFeatures, leftLabels, 'left')
-    classify_rfc(leftFeatures,leftLabels,'left')
+    #classify_rfc(leftFeatures,leftLabels,'left')
     print "-----------------------Classification for Right eye ---------------------------\n"
     classify_svm(rightFeatures,rightLabels,'right')
-    classify_rfc(rightFeatures,rightLabels,'right')
+    #classify_rfc(rightFeatures,rightLabels,'right')
+
+def test():
+    vc = cv2.VideoCapture(0)
+    if vc.isOpened():
+        print 'camera is ready to capture'
+    else:
+        print 'can not open camera'
+        exit()
+    rval,frame = vc.read()
+    cv2.namedWindow("camera",cv2.CV_WINDOW_AUTOSIZE)
+    cv2.namedWindow("Eyes",cv2.CV_WINDOW_AUTOSIZE)
+    
+    leftModelDir = os.path.join(projectPath,'left')
+    rightModelDir = os.path.join(projectPath,'right')
+
+    with open(os.path.join(leftModelDir,'left_svm.pkl'), 'rb') as fid:
+        leftClf = cPickle.load(fid)
+    
+    with open(os.path.join(rightModelDir,'right_svm.pkl'), 'rb') as fid:
+        rightClf = cPickle.load(fid) 
+ 
+    while True:
+        rval, frame = vc.read()
+        if frame is not None:
+            cv2.imshow("camera",frame)
+            eyes = brivasmodule.detect(frame,"None")
+            cv2.imshow("Eyes",eyes)
+            if eyes is not None:
+                leftEye = eyes[0:48,:]
+                rightEye = eyes[49:,:]
+                leftEyeFeature = get_lbp_feature(leftEye,False)
+                rightEyeFeature = get_lbp_feature(rightEye, False)
+                print leftClf.predict(leftEyeFeature)
+                print rightClf.predict(rightEyeFeature)
+        else:
+            print "no frame"
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+
+if __name__ == '__main__':
+    #train()
+    test()
+    #loadImage()
+    
     
     
     
