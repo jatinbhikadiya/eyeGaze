@@ -7,10 +7,12 @@ import os
 import numpy as np
 import sys
 import time
-projectPath = '/Jatin/workspace/eyePupil'
+projectPath = os.path.dirname(os.path.dirname(os.getcwd()))
 dataPath = os.path.join(projectPath,'data')
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
+modulePath = os.path.join(projectPath,'cppLibrary')
+sys.path.append(modulePath)
 sys.path.append(os.path.join(projectPath,'src'))
 
 from support import utility
@@ -30,8 +32,7 @@ from sklearn.cross_validation import cross_val_score
 import cPickle
 from sklearn.metrics import classification_report
 
-modulePath = '/Jatin/workspace/eyeGaze/src'
-sys.path.append(modulePath)
+
 import cv2
 import brivasmodule
 import numpy
@@ -278,8 +279,7 @@ def test():
                 rightEye = eyes[49:,:]
                 leftEyeFeature = get_lbp_feature(leftEye,False)
                 rightEyeFeature = get_lbp_feature(rightEye, False)
-                print leftClf.predict(leftEyeFeature)
-                print rightClf.predict(rightEyeFeature)
+                print '[leftEye = '+ str(leftClf.predict(leftEyeFeature)) + ', rightEye = ' + str(rightClf.predict(rightEyeFeature)) + ' ]'
         else:
             print "no frame"
         if cv2.waitKey(1) & 0xFF == ord('q'):
