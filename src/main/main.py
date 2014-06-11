@@ -20,6 +20,9 @@ import mahotas
 import itertools
 from sklearn import svm, grid_search
 from skimage.transform import resize
+from skimage.transform import rescale
+from skimage.transform import rotate
+
 from scipy import misc
 from sklearn.cross_validation import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -268,8 +271,9 @@ def test():
         if frame is not None:
             cv2.imshow("camera",frame)
             eyes = brivasmodule.detect(frame,"None")
-            cv2.imshow("Eyes",eyes)
+            
             if eyes is not None:
+                cv2.imshow("Eyes",eyes)
                 leftEye = eyes[0:48,:]
                 rightEye = eyes[49:,:]
                 leftEyeFeature = get_lbp_feature(leftEye,False)
@@ -280,9 +284,42 @@ def test():
             print "no frame"
         if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+def addArtificialData():
+    print "here"
+    baseName = os.path.basename(leftEyePath)
+    print baseName
+    data_dir = os.path.join(projectPath,baseName)
+    print data_dir
+    files = os.listdir(data_dir)
+    files = [f for f in files if f.split('.')[-1]=='txt']
+    print files
+    data = []
+    for f in files:
+        label = f.split('.')[0]
+        filePath = os.path.join(data_dir,f)
+        with open(filePath,'r') as r:
+            for image in r:
+                data.append(image.strip())
+    #print data
+    for f in data:
+        parentDir =  os.path.dirname(f)
+        image_name = f.split('/')[-1].split('.')[0]
+        scale_image_name = os.path.join(parentDir,image_name+'_s.jpg')
+        roate_image_name = os.path.join(parentDir,image_name+'_r.jpg')
+        print image_name
+        img = io.imread(f,as_grey=True)
+        scale_image = rescale(img,0.9)
+        rotated_image = rotate(img,5,resize=False)
+        print img.shape
+        print scale_image.shape
+        print rotated_image.shape
+        io.imsave(scale_image_name,scale_image)
+        io.imsave(roate_image_name,rotated_image)
+        raw_input()
 
 
 if __name__ == '__main__':
+    #addArtificialData()
     #train()
     test()
     #loadImage()
