@@ -12,7 +12,7 @@ projectPath = os.path.dirname(os.path.dirname(os.getcwd()))
 dataPath = os.path.join(projectPath,'data')
 leftEyePath=os.path.join(dataPath,'left')
 rightEyePath=os.path.join(dataPath,'right')
-modulePath = os.path.join(projectPath,'cppLibrary')
+modulePath = os.path.join(projectPath,'library')
 sys.path.append(modulePath)
 sys.path.append(os.path.join(projectPath,'src'))
 
