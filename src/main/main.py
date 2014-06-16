@@ -87,7 +87,7 @@ def extract_features(img_data):
     for sample in img_data:
         im = sample[0]
         label = sample[1]
-        label = utility.change_label(label,3)
+        label = utility.change_label(label,5)
         feature_vector = get_lbp_feature(im)
         features.append(feature_vector)
         labels.append(label)
@@ -149,7 +149,7 @@ def classify_svm(feature,labels,model='left'):
     y_true, y_pred = labelsTest, clf.predict(dataTest)
     print(classification_report(y_true, y_pred))
     print()
-    with open(os.path.join(modelDir,model+'_svm.pkl'), 'wb') as fid:
+    with open(os.path.join(modelDir,model+'_5_svm.pkl'), 'wb') as fid:
         cPickle.dump(clf, fid) 
 
 def classify_rfc(feature,labels,model='left'):
@@ -191,7 +191,7 @@ def classify_rfc(feature,labels,model='left'):
     y_true, y_pred = labelsTest, clf.predict(dataTest)
     print(classification_report(y_true, y_pred))
     print()
-    with open(os.path.join(modelDir,model+'_rfc.pkl'), 'wb') as fid:
+    with open(os.path.join(modelDir,model+'_5_rfc.pkl'), 'wb') as fid:
         cPickle.dump(clf, fid)
 
 
@@ -262,10 +262,10 @@ def test():
     leftModelDir = os.path.join(projectPath,'left')
     rightModelDir = os.path.join(projectPath,'right')
 
-    with open(os.path.join(leftModelDir,'left_svm.pkl'), 'rb') as fid:
+    with open(os.path.join(leftModelDir,'left_5_svm.pkl'), 'rb') as fid:
         leftClf = cPickle.load(fid)
     
-    with open(os.path.join(rightModelDir,'right_svm.pkl'), 'rb') as fid:
+    with open(os.path.join(rightModelDir,'right_5_svm.pkl'), 'rb') as fid:
         rightClf = cPickle.load(fid) 
  
     while True:
